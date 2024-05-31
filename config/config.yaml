@@ -3,7 +3,7 @@ samples: config/sample.tsv
 prefix: ISScreener_smk
 
 # Input fastq directory
-input_reads: /nfs/turbo/umms-esnitkin/Github/ISScreener/test_data
+input_reads: /nfs/esnitkin/Project_Penn_KPC/Sequence_data/fastq/Penn/SRA_submission/
 
 # Trimmomatic parameters
 num_threads: 8
