@@ -12,4 +12,4 @@ path="/nfs/esnitkin/Project_Penn_KPC/Sequence_data/fastq/Penn/SRA_submission/"
 sample_id="sample_id"
 sample_names=$(ls -1 $path | grep _R1 |  cut -d. -f1 | sed 's\_R1\\' | sed 's\_R2\\')
 
-echo -e\n $sample_id $isolate_names > config/sample.tsv
+echo -e\n $sample_id $sample_names | tr ' ' '\n' > config/sample.tsv
