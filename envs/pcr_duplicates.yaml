@@ -1,0 +1,8 @@
+name: pcr_duplicates
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - picard
+  - samtools

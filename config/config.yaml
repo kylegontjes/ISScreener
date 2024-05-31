@@ -1,0 +1,29 @@
+# General information
+samples: config/sample.tsv
+prefix: ISScreener_smk
+
+# Input fastq directory
+input_reads: /nfs/turbo/umms-esnitkin/Github/ISScreener/test_data
+
+# Trimmomatic parameters
+num_threads: 8
+## ILLUMINACLIP parameters
+adapter_file_path: config/adapters/combined_adapters.fa
+seeds: 2
+palindrome_clip_threshold: 30
+simple_clip_threshold: 10
+min_adapter_length: 8
+keep_both_reads: true
+## Sliding window
+window_size: 4
+window_size_quality: 20
+## Minimum length
+min_length: 40
+## Head Crop Length
+head_crop_length: 0
+
+# Bwa parameters
+num_cores: 8
+## Reference genome
+reference_genome: /nfs/turbo/umms-esnitkin/data_sharing/reference/KPNIH1/KPNIH1.fasta
+

@@ -1,0 +1,8 @@
+name: panISa
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - panisa
+  - emboss
