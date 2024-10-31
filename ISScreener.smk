@@ -1,4 +1,5 @@
 # Author: Kyle Gontjes
+# Date: 10-31-2024
 
 configfile: "config/config.yaml"
 
@@ -22,7 +23,8 @@ rule all:
     input:
         r1_paired = expand("results/{prefix}/{sample}/trimmomatic/{sample}_R1_trim_paired.fastq.gz",prefix=PREFIX,sample=SAMPLE),
         aligned_sam_file = expand("results/{prefix}/{sample}/align_reads/{sample}_aln.sam",prefix=PREFIX,sample=SAMPLE),
-        sorted_bam_file = expand("results/{prefix}/{sample}/post_align/{sample}_sorted_aln.bam",prefix=PREFIX,sample=SAMPLE),
+        sorted_bam = expand("results/{prefix}/{sample}/post_align/{sample}_sorted_aln.bam",prefix=PREFIX,sample=SAMPLE),
+        bam_duplicates_removed = expand("results/{prefix}/{sample}/post_align/remove_duplicates/{sample}_aln_marked.bam",prefix=PREFIX,sample=SAMPLE), 
         final_bam = expand("results/{prefix}/{sample}/post_align/remove_duplicates/{sample}_final.bam",prefix=PREFIX,sample=SAMPLE),
         ISFinder_out = expand("results/{prefix}/{sample}/panISa/{sample}_ISFinder.txt",prefix=PREFIX,sample=SAMPLE)
 
@@ -80,7 +82,7 @@ rule sam_to_bam:
         # Bam output files
         bam_file = f"results/{{prefix}}/{{sample}}/post_align/{{sample}}_aln.bam",
         # Bam sorted files
-        sorted_bam_file = f"results/{{prefix}}/{{sample}}/post_align/{{sample}}_sorted_aln.bam",
+        sorted_bam = f"results/{{prefix}}/{{sample}}/post_align/{{sample}}_sorted_aln.bam",
     params:
         outdir_temp = "results/{prefix}/{sample}/post_align/{sample}_sorted_aln_temp"
     log:
@@ -90,7 +92,7 @@ rule sam_to_bam:
     shell:
         """
         samtools view -Sb {input.aligned_sam_file} > {output.bam_file}  
-        samtools sort {output.bam_file} -m 500M -@ 0 -o {output.sorted_bam_file} -T {params.outdir_temp} &> {log.sam_to_bam_log}
+        samtools sort {output.bam_file} -m 500M -@ 0 -o {output.sorted_bam} -T {params.outdir_temp} &> {log.sam_to_bam_log}
         """
         
 # Step 4: Remove duplicates and sort bam file w/ removed duplicates
@@ -102,19 +104,35 @@ rule remove_pcr_duplicates:
         bam_duplicates_removed = f"results/{{prefix}}/{{sample}}/post_align/remove_duplicates/{{sample}}_aln_marked.bam",
         # Picard duplicates_removed_name
         picard_metrics = f"results/{{prefix}}/{{sample}}/post_align/remove_duplicates/{{sample}}_picard_metrics.txt",
+    params:
+        samtools_temp = "results/{prefix}/{sample}/post_align/remove_duplicates/{sample}_final_temp"
+    log:
+        picard_log = "logs/{prefix}/{sample}/post_align/remove_duplicates/{sample}_picard.log", 
+    singularity:
+        "docker://broadinstitute/picard:latest"
+    shell:
+        "java -jar /usr/picard/picard.jar MarkDuplicates -REMOVE_DUPLICATES true -INPUT {input.sorted_bam} -OUTPUT {output.bam_duplicates_removed} -METRICS_FILE {output.picard_metrics} -CREATE_INDEX false -VALIDATION_STRINGENCY LENIENT &> {log.picard_log}"
+
+# Step 5: 
+rule bam_sort:
+    input:
+        bam_duplicates_removed = f"results/{{prefix}}/{{sample}}/post_align/remove_duplicates/{{sample}}_aln_marked.bam"
+    output:
         # duplicates removed sorted bam
         final_bam = f"results/{{prefix}}/{{sample}}/post_align/remove_duplicates/{{sample}}_final.bam"
     params:
         samtools_temp = "results/{prefix}/{sample}/post_align/remove_duplicates/{sample}_final_temp"
     log:
-        picard = "logs/{prefix}/{sample}/post_align/remove_duplicates/{sample}_picard.log",
         post_picard_sort = "logs/{prefix}/{sample}/post_align/remove_duplicates/{sample}_post_picard_sort.log"
-    conda:
-        "envs/pcr_duplicates.yaml"
-    wrapper:
-        "file:wrapper_functions/remove_pcr_duplicates"
+    singularity:
+        "docker://staphb/samtools:1.19"
+    shell:
+        """
+        samtools sort {input.bam_duplicates_removed} -m 500M -@ 0 -o {output.final_bam} -T {params.samtools_temp} &> {log.post_picard_sort}
+        samtools index {output.final_bam}
+        """
 
-# Step 5: Run panISa & ISFinder
+# Step 6: Run panISa & ISFinder
 rule panISa:
     input:
         # sorted bam file
