@@ -28,3 +28,9 @@ sample_id="sample_id"
 sample_names=$(ls -1 $path | grep _R1 |  cut -d. -f1 | sed 's/_R1//')
 
 echo -e\n $sample_id $sample_names | tr ' ' '\n' > config/sample.tsv
+
+# Cureate reference genome
+
+module load Bioinformatics
+module load bwa
+bwa index [reference.fa]
