@@ -1,0 +1,11 @@
+# General information
+samples: config/sample.tsv
+prefix: ISScreener_smk
+
+# Input fastq directory
+input_reads: /nfs/esnitkin/Project_Penn_KPC/Sequence_data/fastq/Penn/SRA_submission
+
+# Bwa parameters
+num_cores: 8
+## Reference genome
+reference_genome: /nfs/turbo/umms-esnitkin/data_sharing/reference/KPNIH1/KPNIH1.fasta
