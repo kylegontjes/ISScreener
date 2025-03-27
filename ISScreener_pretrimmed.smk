@@ -1,7 +1,7 @@
 # Author: Kyle Gontjes
 # Date: 03-27-2025
 
-configfile: "config/config_pretrimmed.yml"
+configfile: "config/config_pretrimmed.yaml"
 
 import pandas as pd
 import os
