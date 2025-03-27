@@ -13,10 +13,14 @@ module load snakemake
 snakemake -s ISScreener.smk --dryrun -p
 
 # Sample command
+## Raw fastq files (i.e., trim first)
 snakemake -s ISScreener.smk --use-conda --use-singularity -j 999 --cluster "sbatch -A {cluster.account} -p {cluster.partition} -N {cluster.nodes}  -t {cluster.walltime} -c {cluster.procs} --mem-per-cpu {cluster.pmem}  --output=slurm_out/slurm-%j.out" --conda-frontend conda --cluster-config config/cluster.json --configfile config/config.yaml --latency-wait 1000
 
-# To run many isolates at the same time (and possibly close the computer, try running this command)
-srun --account=esnitkin1 --nodes=1 --ntasks-per-node=1 --mem-per-cpu=5GB --cpus-per-task=1 --time=12:00:00 --pty /bin/bash
+## Pre-trimmed fastq files  
+snakemake -s ISScreener_trimmed.smk --use-conda --use-singularity -j 999 --cluster "sbatch -A {cluster.account} -p {cluster.partition} -N {cluster.nodes}  -t {cluster.walltime} -c {cluster.procs} --mem-per-cpu {cluster.pmem}  --output=slurm_out/slurm-%j.out" --conda-frontend conda --cluster-config config/cluster.json --configfile config/config_trimmed.yaml --latency-wait 1000
+
+# To run many isolates at the same time, consider using the sbat file
+sbatch ISScreener.sbat 
 
 # Curating the samples_list.csv file
 ## Given a path to a directory with files format
