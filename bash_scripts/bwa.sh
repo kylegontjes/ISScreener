@@ -29,6 +29,8 @@ echo "2: $2"
 echo "3: $3"
 echo "4: $4"
 echo "5: $5" 
+echo "6: $6" 
+echo "7: $7" 
 
 # create file name   
-bwa mem -M -R "$split_field" -t "$4" "$3" "$1" "$2" > "$5"
+bwa mem -M -R "$split_field" -t "$4" "$3" "$1" "$2" | samtools view -Sb | samtools sort -m 500M -@ 0 -o "$5" -T "$6" &> "$7"

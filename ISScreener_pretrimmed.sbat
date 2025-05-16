@@ -1,0 +1,18 @@
+#!/bin/sh
+#SBATCH --job-name=ISScreener_kfoc
+#SBATCH --mail-user=kgontjes@umich.edu
+#SBATCH --mail-type=BEGIN,FAIL,END,REQUEUE
+#SBATCH --export=ALL
+#SBATCH --partition=standard
+#SBATCH --account=esnitkin1
+#SBATCH --nodes=1 --ntasks=1 --cpus-per-task=1 --mem=40g --time=24:00:00
+
+## Note: Chang the mail-user, account, Snakemake file, and SBATCH mem/time requirements as you see fit
+
+# load modules
+module load snakemake
+module load singularity
+module load mamba
+
+# run snakemake
+snakemake -s ISScreener_pretrimmed.smk --use-conda  --use-singularity -j 999 --cluster "sbatch -A {cluster.account} -p {cluster.partition} -N {cluster.nodes}  -t {cluster.walltime} -c {cluster.procs} --mem-per-cpu {cluster.pmem}  --output=slurm_out/slurm-%j.out" --conda-frontend mamba --cluster-config config/cluster.json --configfile config/config_pretrimmed.yaml --latency-wait 30
