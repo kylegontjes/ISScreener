@@ -4,6 +4,15 @@ Runs insertion sequence detection workflow on Illumina WGS data
 # Install
 git clone https://github.com/kylegontjes/ISScreener.git
 
+# Before running the pipeline
+## 1. Set up the reference genome
+Create index of reference genome
+module load Bioinformatics
+
+module load bwa
+
+bwa index [reference genome]
+
 # Usage
 module load singularity
 
