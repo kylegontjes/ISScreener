@@ -51,10 +51,10 @@ bash creatre_master_ISFinder_report.sh [path-to-results-file]
 cd ISScreener/results
 
 for i in $(ls -d */ | sed 's/\///')
- do
- echo $i
- bash ../create_master_ISFinder_report.sh $i
- done
+do
+echo $i
+bash ../create_master_ISFinder_report.sh $i
+done
 
 ## Merging those files
 bash merge_master_IS_Finder_reports.sh [path-to-results-folder] [name-of-final-report]
