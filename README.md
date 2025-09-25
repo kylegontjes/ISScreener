@@ -47,7 +47,7 @@ echo -e\n $sample_id $sample_names | tr ' ' '\n' > config/sample.tsv
 # Curating a master results file
 
 ## Command for individual directory
-bash creatre_master_ISFinder_report.sh [path-to-results-file]
+bash creatre_master_ISFinder_report.sh [path-to-ISScreener-run]
 
 ## Running on multiple directories
 cd ISScreener/results
