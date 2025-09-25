@@ -18,6 +18,8 @@ module load singularity
 
 module load snakemake
 
+module load mamba
+
 # Dry run
 snakemake -s ISScreener.smk --dryrun -p
 
@@ -51,9 +53,13 @@ bash creatre_master_ISFinder_report.sh [path-to-results-file]
 cd ISScreener/results
 
 for i in $(ls -d */ | sed 's/\///')
+
 do
+
 echo $i
+
 bash ../create_master_ISFinder_report.sh $i
+
 done
 
 ## Merging those files
