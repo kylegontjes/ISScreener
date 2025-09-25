@@ -52,7 +52,7 @@ bash creatre_master_ISFinder_report.sh [path-to-ISScreener-run]
 ## Running on multiple directories
 cd ISScreener/results
 
-for i in $(ls -d */ | sed 's/\///')
+for i in $(ls -d */ | sed 's/\\///')
 
 do
 
