@@ -1,5 +1,7 @@
 #!/bin/sh
 
+#1 = Path to results folder 
+
 # Curate ISfinder results 
 cd $1
 

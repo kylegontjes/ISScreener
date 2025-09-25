@@ -41,3 +41,20 @@ sample_id="sample_id"
 sample_names=$(ls -1 $path | grep _R1 |  cut -d. -f1 | sed 's/_R1//')
 
 echo -e\n $sample_id $sample_names | tr ' ' '\n' > config/sample.tsv
+
+# Curating a master results file
+
+## Command for individual directory
+bash creatre_master_ISFinder_report.sh [path-to-results-file]
+
+## Running on multiple directories
+cd ISScreener/results
+
+for i in $(ls -d */ | sed 's/\///')
+ do
+ echo $i
+ bash ../create_master_ISFinder_report.sh $i
+ done
+
+## Merging those files
+bash merge_master_IS_Finder_reports.sh [path-to-results-folder] [name-of-final-report]
